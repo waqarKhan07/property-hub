@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { SetupNotice } from "@/components/SetupNotice";
 import { needsSetupBlock } from "@/lib/setup";
 import { supabase } from "@/lib/supabase";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function ResetPasswordPage() {
+  useDocumentTitle("Set a new password — RentHub");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);

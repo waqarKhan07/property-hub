@@ -19,7 +19,7 @@ export function formatPrice(price: number, unit = "total"): string {
 export function formatCompactPrice(price: number): string {
   if (price >= 1_000_000) {
     const lakh = price / 100_000;
-    if (lakh >= 10) return `PKR ${(price / 1_000_000).toFixed(lakh >= 100 ? 0 : 1)} crore`;
+    if (lakh >= 100) return `PKR ${(price / 1_000_000).toFixed(lakh >= 1_000 ? 0 : 1)} crore`;
     return `PKR ${lakh.toFixed(lakh >= 10 ? 0 : 1)} lac`;
   }
   if (price >= 100_000) {

@@ -2,6 +2,9 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
 export function Modal({
   open,
   onClose,
@@ -16,17 +19,51 @@ export function Modal({
   size?: "sm" | "md" | "lg";
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
+
+    previouslyFocused.current = document.activeElement as HTMLElement | null;
+
+    const dialog = dialogRef.current;
+    const closeButton = dialog?.querySelector<HTMLButtonElement>('button[aria-label="Close"]');
+    closeButton?.focus();
+
+    function trapFocus(e: KeyboardEvent) {
+      if (e.key !== "Tab" || !dialog) return;
+      const focusables = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+        (el) => el.offsetParent !== null,
+      );
+      if (focusables.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
-    };
+    }
+
     document.addEventListener("keydown", onKey);
+    document.addEventListener("keydown", trapFocus);
     document.body.style.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("keydown", trapFocus);
       document.body.style.overflow = "";
+      previouslyFocused.current?.focus?.();
+      previouslyFocused.current = null;
     };
   }, [open, onClose]);
 

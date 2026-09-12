@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   UserX,
 } from "lucide-react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const rules: { title: string; icon: typeof ShieldCheck; text: string }[] = [
   {
@@ -41,6 +42,7 @@ const rules: { title: string; icon: typeof ShieldCheck; text: string }[] = [
 ];
 
 export default function HelpPage() {
+  useDocumentTitle("Help & safety — RentHub");
   return (
     <div className="container-app py-10">
       <div className="mx-auto max-w-3xl">

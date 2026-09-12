@@ -9,7 +9,6 @@ alter table public.notifications enable row level security;
 alter table public.reports enable row level security;
 alter table public.verification_requests enable row level security;
 alter table public.admin_actions enable row level security;
-alter table public.saved_searches enable row level security;
 
 -- Column-level security: users can never read another user's email,
 -- and can never alter roles / verification statuses / counters directly.
@@ -17,7 +16,7 @@ revoke select (email) on public.profiles from anon, authenticated;
 revoke update (email, role, verification_status, created_at, updated_at) on public.profiles from anon, authenticated;
 revoke update (status, verification_status, views_count, favorites_count, owner_id, slug, expires_at, created_at, updated_at, id) on public.properties from anon, authenticated;
 
--- ============ profiles ============
+-- ============ profiles ============a
 create policy profiles_select on public.profiles for select to anon, authenticated using (true);
 create policy profiles_update_own on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 
@@ -99,7 +98,3 @@ create policy admin_actions_select on public.admin_actions for select to authent
 create policy admin_actions_insert on public.admin_actions for insert to authenticated with check (public.is_admin());
 
 -- ============ saved searches ============
-create policy saved_searches_select_own on public.saved_searches for select to authenticated using (user_id = auth.uid());
-create policy saved_searches_insert_own on public.saved_searches for insert to authenticated with check (user_id = auth.uid());
-create policy saved_searches_update_own on public.saved_searches for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
-create policy saved_searches_delete_own on public.saved_searches for delete to authenticated using (user_id = auth.uid());

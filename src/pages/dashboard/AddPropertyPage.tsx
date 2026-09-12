@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { PropertyWizard } from "@/pages/dashboard/PropertyWizard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function AddPropertyPage() {
+  useDocumentTitle("Add a property — RentHub");
   return (
     <div className="container-app py-8">
       <div className="mx-auto mb-5 flex w-full max-w-3xl items-center gap-3">

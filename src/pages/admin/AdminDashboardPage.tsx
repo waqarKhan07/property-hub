@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { supabase } from "@/lib/supabase";
 import { formatDateTime } from "@/lib/utils";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 interface AdminStats {
   totalUsers: number;
@@ -17,6 +18,7 @@ interface AdminStats {
 }
 
 export default function AdminDashboardPage() {
+  useDocumentTitle("Admin overview — RentHub");
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [reports, setReports] = useState<Array<{ id: string; target_type: string; reason: string; status: string; created_at: string }>>([]);
   const [error, setError] = useState(false);
@@ -25,7 +27,7 @@ export default function AdminDashboardPage() {
     let active = true;
     (async () => {
       const [profiles, props, verif, rep, visits] = await Promise.all([
-        supabase.from("profiles").select("id, role", { count: "exact", head: true }),
+        supabase.from("profiles").select("id, role", { count: "exact" }),
         supabase.from("properties").select("id", { count: "exact", head: true }).eq("status", "active"),
         supabase.from("verification_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase

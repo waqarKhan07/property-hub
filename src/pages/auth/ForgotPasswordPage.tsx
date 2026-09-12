@@ -7,8 +7,10 @@ import { SetupNotice } from "@/components/SetupNotice";
 import { needsSetupBlock } from "@/lib/setup";
 import { supabase } from "@/lib/supabase";
 import { config } from "@/config/config";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function ForgotPasswordPage() {
+  useDocumentTitle("Reset password — RentHub");
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);

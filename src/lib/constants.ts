@@ -3,6 +3,7 @@ import type {
   ListingType,
   PricePerUnit,
   PropertyAreaUnit,
+  PropertyStatus,
   PropertyType,
   VerificationStatus,
   VisitStatus,
@@ -110,4 +111,37 @@ export const visitStatusLabels: Record<VisitStatus, string> = {
   completed: "Completed",
   cancelled: "Cancelled",
   declined: "Declined",
+};
+
+export const visitStatusTone: Record<VisitStatus, "gray" | "blue" | "green" | "amber" | "red"> = {
+  pending: "amber",
+  confirmed: "green",
+  reschedule_requested: "blue",
+  completed: "gray",
+  cancelled: "red",
+  declined: "red",
+};
+
+export const propertyStatusLabels: Record<PropertyStatus, string> = {
+  draft: "Draft",
+  pending: "Pending review",
+  active: "Active",
+  paused: "Paused",
+  sold: "Sold",
+  rented: "Rented",
+  expired: "Expired",
+  rejected: "Rejected",
+  suspended: "Suspended",
+};
+
+export const propertyStatusTone: Record<PropertyStatus, "gray" | "green" | "amber" | "blue" | "red"> = {
+  draft: "gray",
+  pending: "amber",
+  active: "green",
+  paused: "amber",
+  sold: "blue",
+  rented: "blue",
+  expired: "gray",
+  rejected: "red",
+  suspended: "red",
 };

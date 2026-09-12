@@ -11,17 +11,8 @@ import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDateTime, initials, todayISO } from "@/lib/utils";
-import { visitStatusLabels } from "@/lib/constants";
+import { visitStatusLabels, visitStatusTone } from "@/lib/constants";
 import type { VisitRequest, VisitStatus } from "@/types";
-
-const statusTone: Record<VisitStatus, "gray" | "blue" | "green" | "amber" | "red"> = {
-  pending: "amber",
-  confirmed: "green",
-  reschedule_requested: "blue",
-  completed: "gray",
-  cancelled: "red",
-  declined: "red",
-};
 
 interface Row extends VisitRequest {
   requester: { full_name: string | null } | null;
@@ -118,7 +109,7 @@ export default function OwnerVisitsPage() {
                       <Link to={`/property/${r.property_id}`} className="font-semibold text-ink-900 hover:text-brand-700">
                         {r.property?.title ?? "Property"}
                       </Link>
-                      <Badge tone={statusTone[r.status]}>{visitStatusLabels[r.status]}</Badge>
+                      <Badge tone={visitStatusTone[r.status]}>{visitStatusLabels[r.status]}</Badge>
                     </div>
                     <p className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-700">
                       <span className="flex items-center gap-1.5">

@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
 import { PropertyCard, PropertyGridSkeleton } from "@/components/PropertyCard";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { PropertyWithOwner } from "@/types";
 
 export default function FavoritesPage() {
+  useDocumentTitle("Saved properties — RentHub");
   const { user } = useAuth();
   const [properties, setProperties] = useState<PropertyWithOwner[] | null>(null);
   const [error, setError] = useState(false);
@@ -28,7 +31,7 @@ export default function FavoritesPage() {
         }
         const list = (data ?? [])
           .map((r) => r.property as unknown as PropertyWithOwner | null)
-          .filter((p): p is PropertyWithOwner => p !== null && p.status === "active");
+          .filter((p): p is PropertyWithOwner => p !== null);
         setProperties(list);
       });
     return () => {
@@ -57,9 +60,7 @@ export default function FavoritesPage() {
             description="Tap the heart on any property to save it here so you can find it again easily."
             action={
               <Link to="/search">
-                <button className="rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
-                  Start searching
-                </button>
+                <Button>Start searching</Button>
               </Link>
             }
           />

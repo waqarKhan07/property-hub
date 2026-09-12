@@ -159,6 +159,7 @@ export interface CityArea {
   areas: string[];
 }
 
+// TODO: implement saved searches
 export interface SavedSearch {
   id: string;
   user_id: string;

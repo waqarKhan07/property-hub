@@ -10,35 +10,13 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { formatCompactPrice, timeAgo } from "@/lib/utils";
-import { propertyTypeLabels } from "@/lib/constants";
-import type { Property, PropertyStatus } from "@/types";
-
-const statusTone: Record<PropertyStatus, "gray" | "green" | "amber" | "blue" | "red"> = {
-  draft: "gray",
-  pending: "amber",
-  active: "green",
-  paused: "amber",
-  sold: "blue",
-  rented: "blue",
-  expired: "gray",
-  rejected: "red",
-  suspended: "red",
-};
-
-const statusLabel: Record<PropertyStatus, string> = {
-  draft: "Draft",
-  pending: "Pending review",
-  active: "Active",
-  paused: "Paused",
-  sold: "Sold",
-  rented: "Rented",
-  expired: "Expired",
-  rejected: "Rejected",
-  suspended: "Suspended",
-};
+import { propertyTypeLabels, propertyStatusLabels, propertyStatusTone } from "@/lib/constants";
+import type { Property } from "@/types";
 
 export default function MyPropertiesPage() {
+  useDocumentTitle("My properties — RentHub");
   const { user } = useAuth();
   const [properties, setProperties] = useState<Property[] | null>(null);
   const [error, setError] = useState(false);
@@ -145,7 +123,7 @@ export default function MyPropertiesPage() {
                       <span className="font-medium text-ink-700">{formatCompactPrice(Number(p.price))}</span>
                     </p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                      <Badge tone={statusTone[p.status]}>{statusLabel[p.status]}</Badge>
+                      <Badge tone={propertyStatusTone[p.status]}>{propertyStatusLabels[p.status]}</Badge>
                       <span className="text-xs text-ink-400">
                         {p.views_count} views · {p.favorites_count} saves · listed {timeAgo(p.created_at)}
                       </span>

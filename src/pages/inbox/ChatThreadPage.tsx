@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { cn, initials, timeAgo } from "@/lib/utils";
 import type { Message } from "@/types";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
@@ -17,6 +18,7 @@ interface ThreadMeta {
 }
 
 export default function ChatThreadPage() {
+  useDocumentTitle("Conversation — RentHub");
   const { conversationId } = useParams<{ conversationId: string }>();
   const { user, session } = useAuth();
   const [meta, setMeta] = useState<ThreadMeta | null>(null);

@@ -30,9 +30,19 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { getProperty } from "@/lib/properties";
 import { supabase } from "@/lib/supabase";
-import { todayISO, inThreeMonthsISO, timeAgo, formatPrice, formatArea, formatDate, cn, copyText, initials as genericInitials } from "@/lib/utils";
+import { todayISO, timeAgo, formatPrice, formatArea, formatDate, cn, copyText, initials as genericInitials } from "@/lib/utils";
 import { propertyTypeLabels, reportReasons, priceUnitLabels, listingTypeLabels } from "@/lib/constants";
 import type { PropertyWithOwner, VisitStatus } from "@/types";
+
+const VIEW_COOLDOWN_MS = 30 * 60 * 1000;
+
+function shouldCountView(propertyId: string): boolean {
+  const key = `renthub:view:${propertyId}`;
+  const last = Number(localStorage.getItem(key) ?? 0);
+  if (Date.now() - last < VIEW_COOLDOWN_MS) return false;
+  localStorage.setItem(key, String(Date.now()));
+  return true;
+}
 
 function Gallery({
   images,
@@ -44,6 +54,23 @@ function Gallery({
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
   const list = images.length > 0 ? images : [""];
+
+  useEffect(() => {
+    if (!zoom) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setZoom(false);
+      } else if (e.key === "ArrowRight") {
+        setActive((a) => Math.min(a + 1, list.length - 1));
+      } else if (e.key === "ArrowLeft") {
+        setActive((a) => Math.max(a - 1, 0));
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    const closeButton = document.querySelector<HTMLButtonElement>('button[aria-label="Close gallery"]');
+    closeButton?.focus();
+    return () => document.removeEventListener("keydown", onKey);
+  }, [zoom, list.length]);
 
   return (
     <div>
@@ -82,6 +109,7 @@ function Gallery({
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink-950/95 p-4">
           <button
             type="button"
+            aria-label="Close gallery"
             className="absolute right-4 top-4 rounded-lg bg-white/10 px-3 py-1.5 text-sm text-white hover:bg-white/20"
             onClick={() => setZoom(false)}
           >
@@ -197,7 +225,7 @@ function ScheduleVisitModal({
 }) {
   const { session } = useAuth();
   const navigate = useNavigate();
-  const [date, setDate] = useState(inThreeMonthsISO());
+  const [date, setDate] = useState(todayISO());
   const [time, setTime] = useState("10:00");
   const [guests, setGuests] = useState("1");
   const [message, setMessage] = useState("");
@@ -429,7 +457,7 @@ function ReportModal({
 
 export default function PropertyDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const { session } = useAuth();
+  const { session, loading } = useAuth();
   const { favoriteIds, loaded: favsLoaded, toggleFavorite } = useFavorites();
   const navigate = useNavigate();
   const countedView = useRef(false);
@@ -449,7 +477,7 @@ export default function PropertyDetailsPage() {
       .then((p) => {
         if (!active) return;
         setProperty(p);
-        if (p && !countedView.current) {
+        if (p && !loading && !countedView.current && p.owner_id !== session?.user?.id && shouldCountView(p.id)) {
           countedView.current = true;
           supabase.rpc("increment_property_view", { property: id }).then(() => {}, () => {});
         }
@@ -458,7 +486,7 @@ export default function PropertyDetailsPage() {
     return () => {
       active = false;
     };
-  }, [id]);
+  }, [id, loading, session?.user?.id]);
 
   useEffect(() => {
     if (property) {

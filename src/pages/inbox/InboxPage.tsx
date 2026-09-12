@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { timeAgo, initials } from "@/lib/utils";
 import type { Conversation, PublicProfile } from "@/types";
 
@@ -28,6 +29,7 @@ const convSelect = `
 `;
 
 export default function InboxPage() {
+  useDocumentTitle("Messages — RentHub");
   const { user, session } = useAuth();
   const [rows, setRows] = useState<ConversationRow[] | null>(null);
   const [error, setError] = useState(false);

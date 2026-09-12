@@ -2,23 +2,17 @@ import { useEffect, useState } from "react";
 import { CalendarClock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { formatDateTime } from "@/lib/utils";
-import { visitStatusLabels } from "@/lib/constants";
-import type { VisitRequestWithDetails, VisitStatus } from "@/types";
-
-const statusTone: Record<VisitStatus, "gray" | "blue" | "green" | "amber" | "red"> = {
-  pending: "amber",
-  confirmed: "green",
-  reschedule_requested: "blue",
-  completed: "gray",
-  cancelled: "red",
-  declined: "red",
-};
+import { visitStatusLabels, visitStatusTone } from "@/lib/constants";
+import type { VisitRequestWithDetails } from "@/types";
 
 export default function MyVisitsPage() {
+  useDocumentTitle("My visits — RentHub");
   const { user } = useAuth();
   const [visits, setVisits] = useState<VisitRequestWithDetails[] | null>(null);
   const [error, setError] = useState(false);
@@ -68,9 +62,7 @@ export default function MyVisitsPage() {
               When you request a visit on a property, it will appear here with live status updates.
             </p>
             <Link to="/search" className="mt-5 inline-block">
-              <button className="rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
-                Find a property to visit
-              </button>
+              <Button>Find a property to visit</Button>
             </Link>
           </div>
         )}
@@ -90,7 +82,7 @@ export default function MyVisitsPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge tone={statusTone[v.status]}>{visitStatusLabels[v.status]}</Badge>
+              <Badge tone={visitStatusTone[v.status]}>{visitStatusLabels[v.status]}</Badge>
             </div>
           </div>
         ))}

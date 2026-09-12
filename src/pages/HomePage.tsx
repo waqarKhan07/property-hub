@@ -21,6 +21,7 @@ import { PropertyCard, PropertyGridSkeleton } from "@/components/PropertyCard";
 import { SetupNotice } from "@/components/SetupNotice";
 import { needsSetupBlock } from "@/lib/setup";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { queryProperties } from "@/lib/properties";
 import { cityNames, propertyTypesByListing, propertyTypeLabels } from "@/lib/constants";
 import type { ListingType, PropertyWithOwner, PropertyType } from "@/types";
@@ -156,6 +157,7 @@ function AiSearchBox() {
 }
 
 export default function HomePage() {
+  useDocumentTitle("RentHub — Find a place you'll love");
   const { user } = useAuth();
   const [featured, setFeatured] = useState<PropertyWithOwner[] | null>(null);
   const [featuredError, setFeaturedError] = useState(false);

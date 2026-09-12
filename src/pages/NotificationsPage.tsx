@@ -5,10 +5,12 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { timeAgo, cn } from "@/lib/utils";
 import type { AppNotification } from "@/types";
 
 export default function NotificationsPage() {
+  useDocumentTitle("Notifications — RentHub");
   const { user } = useAuth();
   const [items, setItems] = useState<AppNotification[] | null>(null);
   const [error, setError] = useState(false);

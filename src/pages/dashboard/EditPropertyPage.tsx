@@ -1,8 +1,10 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { PropertyWizard } from "@/pages/dashboard/PropertyWizard";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function EditPropertyPage() {
+  useDocumentTitle("Edit listing — RentHub");
   const { id } = useParams<{ id: string }>();
   return (
     <div className="container-app py-8">

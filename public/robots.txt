@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /inbox/
+Disallow: /dashboard/
+Disallow: /favorites
+Disallow: /notifications
+Disallow: /my-visits
+Disallow: /admin
+
+Sitemap: https://renthub.example.com/sitemap.xml

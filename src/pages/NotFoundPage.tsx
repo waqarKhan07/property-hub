@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { SearchX } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function NotFoundPage() {
+  useDocumentTitle("Page not found — RentHub");
   return (
     <div className="container-app flex min-h-[60vh] flex-col items-center justify-center py-16 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-ink-100 text-ink-400">

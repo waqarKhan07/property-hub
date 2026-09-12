@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { initials } from "@/lib/utils";
 import { verificationBadgeLabel } from "@/lib/constants";
 import type { VerificationStatus } from "@/types";
@@ -21,6 +22,7 @@ const toneByStatus: Record<VerificationStatus, "gray" | "green" | "amber" | "red
 };
 
 export default function ProfilePage() {
+  useDocumentTitle("My profile — RentHub");
   const { user, profile, refreshProfile } = useAuth();
   const [fullName, setFullName] = useState("");
   const [bio, setBio] = useState("");

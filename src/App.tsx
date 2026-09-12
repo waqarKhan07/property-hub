@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RootLayout } from "@/components/layout/RootLayout";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RequireOwner } from "@/components/auth/RequireOwner";
@@ -30,43 +31,45 @@ const HelpPage = lazy(() => import("@/pages/HelpPage"));
 
 export default function App() {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route element={<RootLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="search" element={<SearchPage />} />
-          <Route path="property/:id" element={<PropertyDetailsPage />} />
-          <Route path="help" element={<HelpPage />} />
+    <ErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route element={<RootLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="search" element={<SearchPage />} />
+            <Route path="property/:id" element={<PropertyDetailsPage />} />
+            <Route path="help" element={<HelpPage />} />
 
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
-          <Route path="forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="reset-password" element={<ResetPasswordPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
 
-          <Route element={<RequireAuth />}>
-            <Route path="favorites" element={<FavoritesPage />} />
-            <Route path="my-visits" element={<MyVisitsPage />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="inbox" element={<InboxPage />} />
-            <Route path="inbox/:conversationId" element={<ChatThreadPage />} />
+            <Route element={<RequireAuth />}>
+              <Route path="favorites" element={<FavoritesPage />} />
+              <Route path="my-visits" element={<MyVisitsPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="inbox" element={<InboxPage />} />
+              <Route path="inbox/:conversationId" element={<ChatThreadPage />} />
 
-            <Route element={<RequireOwner />}>
-<Route path="dashboard" element={<OwnerDashboardPage />} />
-            <Route path="dashboard/profile" element={<ProfilePage />} />
-            <Route path="dashboard/properties" element={<MyPropertiesPage />} />
-              <Route path="dashboard/properties/new" element={<AddPropertyPage />} />
-              <Route path="dashboard/properties/:id/edit" element={<EditPropertyPage />} />
-              <Route path="dashboard/visits" element={<OwnerVisitsPage />} />
+              <Route element={<RequireOwner />}>
+                <Route path="dashboard" element={<OwnerDashboardPage />} />
+                <Route path="dashboard/profile" element={<ProfilePage />} />
+                <Route path="dashboard/properties" element={<MyPropertiesPage />} />
+                <Route path="dashboard/properties/new" element={<AddPropertyPage />} />
+                <Route path="dashboard/properties/:id/edit" element={<EditPropertyPage />} />
+                <Route path="dashboard/visits" element={<OwnerVisitsPage />} />
+              </Route>
+
+              <Route element={<RequireAdmin />}>
+                <Route path="admin" element={<AdminDashboardPage />} />
+              </Route>
             </Route>
 
-            <Route element={<RequireAdmin />}>
-              <Route path="admin" element={<AdminDashboardPage />} />
-            </Route>
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
-
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+    </ErrorBoundary>
   );
 }

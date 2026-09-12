@@ -10,6 +10,7 @@ import { PropertyCard, PropertyGridSkeleton } from "@/components/PropertyCard";
 import { parseNaturalSearch } from "@/lib/aiSearch";
 import { buildPropertyQuery, type PropertyFilters } from "@/lib/properties";
 import { allAreas, cityNames, cities, propertyTypeLabels, propertyTypesByListing } from "@/lib/constants";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { ListingType, PropertyWithOwner, PropertyType } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -295,7 +296,10 @@ export default function SearchPage() {
   if (filters.furnished === false) activeChips.push({ label: "Unfurnished", clear: () => setFilters({ ...filters, furnished: undefined }) });
   if (filters.verified) activeChips.push({ label: "Verified", clear: () => setFilters({ ...filters, verified: undefined }) });
 
-  const title = filters.city ? `Properties for ${filters.listing_type === "sale" ? "sale" : "rent"} in ${filters.city}` : `Properties for ${filters.listing_type === "sale" ? "sale" : "rent"}`;
+  const intent =
+    filters.listing_type === "sale" ? "sale" : filters.listing_type === "rent" ? "rent" : "rent or sale";
+  const title = filters.city ? `Properties for ${intent} in ${filters.city}` : `Properties for ${intent}`;
+  useDocumentTitle(`${title} — RentHub`);
 
   return (
     <div className="container-app py-6">

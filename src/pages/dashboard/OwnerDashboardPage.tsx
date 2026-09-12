@@ -16,7 +16,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { formatDateTime, cn } from "@/lib/utils";
-import { visitStatusLabels } from "@/lib/constants";
+import { visitStatusLabels, visitStatusTone } from "@/lib/constants";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { VisitStatus } from "@/types";
 
 interface Stats {
@@ -29,15 +30,6 @@ interface Stats {
   draftCount: number;
 }
 
-const statusTone: Record<VisitStatus, "gray" | "blue" | "green" | "amber" | "red"> = {
-  pending: "amber",
-  confirmed: "green",
-  reschedule_requested: "blue",
-  completed: "gray",
-  cancelled: "red",
-  declined: "red",
-};
-
 interface VisitRow {
   id: string;
   visit_date: string;
@@ -48,6 +40,7 @@ interface VisitRow {
 }
 
 export default function OwnerDashboardPage() {
+  useDocumentTitle("Dashboard — RentHub");
   const { user } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [visits, setVisits] = useState<Array<{ id: string; visit_date: string; visit_time: string; status: VisitStatus; requester: { full_name: string | null } | null; property: { title: string } | null }>>([]);
@@ -158,7 +151,7 @@ export default function OwnerDashboardPage() {
                         {formatDateTime(`${v.visit_date}T${v.visit_time}`)} · {v.requester?.full_name ?? "A tenant"}
                       </p>
                     </div>
-                    <Badge tone={statusTone[v.status]}>{visitStatusLabels[v.status]}</Badge>
+                    <Badge tone={visitStatusTone[v.status]}>{visitStatusLabels[v.status]}</Badge>
                   </Card>
                 ))}
               </div>

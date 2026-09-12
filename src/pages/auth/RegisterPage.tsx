@@ -7,9 +7,11 @@ import { SetupNotice } from "@/components/SetupNotice";
 import { needsSetupBlock } from "@/lib/setup";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { config } from "@/config/config";
 
 export default function RegisterPage() {
+  useDocumentTitle("Create an account — RentHub");
   const { session } = useAuth();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? "/dashboard";

@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { AuthShell } from "@/pages/auth/AuthShell";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { SetupNotice } from "@/components/SetupNotice";
-import { needsSetupBlock } from "@/lib/setup";
+import { BackendGate } from "@/components/auth/BackendGate";
 import { supabase } from "@/lib/supabase";
+import { describeAuthError } from "@/lib/authErrors";
 import { config } from "@/config/config";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
@@ -16,19 +16,15 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  if (needsSetupBlock()) {
-    return (
-      <AuthShell title="Reset your password">
-        <SetupNotice />
-      </AuthShell>
-    );
-  }
-
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     if (!email) {
       setError("Please enter your email.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("That doesn't look like a valid email address.");
       return;
     }
     setSubmitting(true);
@@ -37,7 +33,7 @@ export default function ForgotPasswordPage() {
     });
     setSubmitting(false);
     if (authError) {
-      setError("We couldn't send a reset link. Please check the email and try again.");
+      setError(describeAuthError(authError, "We couldn't send a reset link. Please check the email and try again."));
       return;
     }
     setSent(true);
@@ -57,31 +53,33 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="grid gap-4" noValidate>
-          <Input
-            type="email"
-            label="Email"
-            placeholder="you@example.com"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          {error && (
-            <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-              {error}
+        <BackendGate>
+          <form onSubmit={onSubmit} className="grid gap-4" noValidate>
+            <Input
+              type="email"
+              label="Email"
+              placeholder="you@example.com"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            {error && (
+              <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                {error}
+              </p>
+            )}
+            <Button type="submit" size="lg" loading={submitting} fullWidth>
+              Send reset link
+            </Button>
+            <p className="text-center text-sm text-ink-600">
+              Remembered it?{" "}
+              <Link to="/login" className="font-medium text-brand-600 hover:underline">
+                Sign in
+              </Link>
             </p>
-          )}
-          <Button type="submit" size="lg" loading={submitting} fullWidth>
-            Send reset link
-          </Button>
-          <p className="text-center text-sm text-ink-600">
-            Remembered it?{" "}
-            <Link to="/login" className="font-medium text-brand-600 hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </form>
+          </form>
+        </BackendGate>
       )}
     </AuthShell>
   );

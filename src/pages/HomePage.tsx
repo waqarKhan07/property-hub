@@ -23,6 +23,7 @@ import { needsSetupBlock } from "@/lib/setup";
 import { useAuth } from "@/hooks/useAuth";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { queryProperties } from "@/lib/properties";
+import { useBackendStatus } from "@/lib/backend";
 import { cityNames, propertyTypesByListing, propertyTypeLabels } from "@/lib/constants";
 import type { ListingType, PropertyWithOwner, PropertyType } from "@/types";
 
@@ -176,6 +177,7 @@ export default function HomePage() {
     };
   }, []);
 
+  const featureFlags = useBackendStatus();
   const featuredList = useMemo(() => featured ?? [], [featured]);
 
   return (
@@ -207,6 +209,18 @@ export default function HomePage() {
               <>
                 <HeroSearch />
                 <AiSearchBox />
+                <dl className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-8 gap-y-2 text-center animate-fade-up-delay-2">
+                  {[
+                    { k: "Free listings", v: "for owners on RentHub" },
+                    { k: "Visit first", v: "never pay money upfront" },
+                    { k: "Verified", v: "owners and direct chat" },
+                  ].map((item) => (
+                    <div key={item.k}>
+                      <dt className="text-sm font-semibold text-white">{item.k}</dt>
+                      <dd className="text-xs text-brand-200">{item.v}</dd>
+                    </div>
+                  ))}
+                </dl>
               </>
             )}
           </div>
@@ -241,7 +255,14 @@ export default function HomePage() {
 
         {featuredError && (
           <div className="rounded-2xl border border-ink-200 bg-white p-8 text-center text-sm text-ink-500">
-            We couldn&apos;t load listings right now. Please try again in a moment.
+            {featureFlags.offline ? (
+              <>
+                <p className="font-semibold text-ink-800">Listings are unavailable while the database is disconnected.</p>
+                <p className="mt-1">Add valid credentials to your .env file and restart the dev server to see properties here.</p>
+              </>
+            ) : (
+              <p>We couldn&apos;t load listings right now. Please try again in a moment.</p>
+            )}
           </div>
         )}
         {!featured && !featuredError && <PropertyGridSkeleton count={8} />}

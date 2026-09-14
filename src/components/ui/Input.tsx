@@ -6,13 +6,14 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string | null;
   hint?: string;
   leadingIcon?: ReactNode;
+  trailingAction?: ReactNode;
 }
 
 const baseControlClass =
   "w-full rounded-lg border border-ink-300 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:cursor-not-allowed disabled:bg-ink-100";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, hint, leadingIcon, id, ...props }, ref) => {
+  ({ className, label, error, hint, leadingIcon, trailingAction, id, ...props }, ref) => {
     const autoId = useId();
     const inputId = id ?? autoId;
     return (
@@ -36,10 +37,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               baseControlClass,
               leadingIcon ? "pl-10" : "",
+              trailingAction ? "pr-10" : "",
               error && "border-red-400 focus:border-red-500 focus:ring-red-500/30",
             )}
             {...props}
           />
+          {trailingAction && (
+            <span className="absolute inset-y-0 right-0 flex items-center pr-2">{trailingAction}</span>
+          )}
         </div>
         {error ? (
           <p id={`${inputId}-error`} role="alert" className="mt-1.5 text-sm text-red-600">

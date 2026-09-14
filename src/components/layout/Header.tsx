@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { cn, initials } from "@/lib/utils";
+import { BackendStatusBanner } from "@/components/auth/BackendStatusBanner";
 
 const mainNav = [
   { to: "/search?listing_type=rent", label: "Rent" },
@@ -105,9 +106,25 @@ function AvatarMenu() {
 export function Header() {
   const { user } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ink-200 bg-white/90 backdrop-blur">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b bg-white/90 backdrop-blur transition-shadow",
+        scrolled ? "border-ink-200 shadow-sm" : "border-ink-200/70",
+      )}
+    >
+      <BackendStatusBanner />
       <div className="container-app flex h-16 items-center justify-between gap-3">
         <Logo />
 
@@ -136,7 +153,7 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <Link to="/search" className="lg:hidden">
-            <Button variant="ghost" size="icon" aria-label="Search" className="pointer-events-none">
+            <Button variant="ghost" size="icon" aria-label="Search">
               <Search className="h-5 w-5" />
             </Button>
           </Link>
@@ -181,7 +198,7 @@ export function Header() {
       </div>
 
       {drawerOpen && (
-        <nav className="border-t border-ink-100 bg-white px-4 py-3 lg:hidden" aria-label="Mobile">
+        <nav className="animate-sheet-in border-t border-ink-100 bg-white px-4 py-3 lg:hidden" aria-label="Mobile">
           <div className="grid gap-1">
             {mainNav.map((item) => (
               <Link
